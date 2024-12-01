@@ -1,0 +1,39 @@
+@startuml
+!pragma useVerticalIf on
+
+start
+
+if (User type?) then (Employer)
+  
+  :do employer stuff;
+
+  :create vacancy;
+
+  repeat
+  :wait for applications;
+
+  if (Any applications?) then (yes)
+    :review application;
+  endif
+  repeat while (vacancy filled?) is (keep waiting) not (yes)
+
+  :close vacancy;
+  
+
+else (Applicant)
+
+  :do applicant stuff;
+  
+  repeat
+  :search for interesting vacancy;
+  :apply to vacancy;
+
+  repeat while (any application pending?) is (yes) not (job found)
+
+  :delete any remaining pending applications;
+
+endif
+
+stop
+
+@enduml
