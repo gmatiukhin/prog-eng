@@ -11,11 +11,13 @@ package "Vacancy System" {
   usecase "Close vacancy"       as clv
   usecase "View vacancy"        as vv
 
+  usecase "Edit applicant profile" as ep
+  usecase "Search vacancies"    as sv
   usecase "Apply for vacancy"   as afv
 
+  usecase "View application list for vacancy" as vapps
   usecase "View applicant" as vap
   usecase "View employer" as vep
-  
 }
 
 e --> cv
@@ -25,9 +27,14 @@ e --> vv
 e --> clv
 
 a --> vv
+a -> ep
 a --> afv
+a -> sv
 
 a -> vep
 e -> vap
+
+e -> vapps
+
 
 @enduml
