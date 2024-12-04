@@ -1,0 +1,46 @@
+@startuml
+actor     Applicant           as a
+entity    ResponseController  as rc
+entity    SearchEngine        as se
+database  Database            as db
+
+a --> se : search for open vacancy
+activate a
+  activate se
+    opt apply tag filter
+    a --> se : search for tags
+    se --> db
+    activate db
+      se <-- db
+    deactivate db
+    a <-- se
+    a --> se : apply tag filter
+    end
+
+    opt apply employer filters
+    a --> se : search employers
+    se --> db
+    activate db
+      se <-- db
+    deactivate db
+    a <-- se
+    a --> se : apply employer filter
+    end
+
+    se --> db : search database\nfor vacancies\nmatching search query\nand optional filters
+    activate db
+      se <-- db
+    deactivate db
+    a <-- se
+  deactivate se
+  a --> rc : respond to selected vacancy
+  activate rc
+    rc --> db : create response
+    activate db
+      rc <-- db
+    deactivate db
+    a <-- rc : get confirmation
+  deactivate rc
+deactivate a
+
+@enduml
