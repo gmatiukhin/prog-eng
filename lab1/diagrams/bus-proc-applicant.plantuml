@@ -1,0 +1,15 @@
+@startuml
+
+start
+  
+repeat
+:search for interesting vacancy;
+:apply to vacancy;
+
+repeat while (any application pending?) is (yes) not (job found)
+
+:delete any remaining pending applications;
+
+stop
+
+@enduml

@@ -1,0 +1,20 @@
+@startuml
+
+start
+
+:create vacancy;
+
+repeat
+:wait for applications;
+
+if (Any applications?) then (yes)
+  :review application;
+else (no)
+endif 
+repeat while (vacancy filled?) is (no) not (yes)
+
+:close vacancy;
+
+stop
+
+@enduml
