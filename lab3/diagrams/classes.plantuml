@@ -1,10 +1,14 @@
 @startuml
 allowmixing
 
-abstract User {
-  + Id id
+class Details {
   + String name
   + String description
+  + List<Image> images
+}
+
+abstract User {
+  + Id id
 }
 
 class Applicant
@@ -12,31 +16,27 @@ class Applicant
 class Employer
 
 class UserManager {
-  + User create(name: String, desc: String)
-  + void editName(userId: Id, name: String)
-  + void editDescription(userId: Id, desc: String)
-  + void delete(userId: Id)
-  + User getUser(userId: Id)
+  + User create(String name, Details details)
+  + void editProfile(Id userId, Details details)
+  + void delete(Id userId)
+  + User getUser(Id userId)
 }
 
 class VacancyController {
-  + void createVacancy(name: String, desc: String, tags: List<Tag>)
-  + void editVacancy(id: Id, name: String, desc: String, tags: List<Tag>)
-  + void deleteVacancy(id: Id)
-  + List<Vacancy> getVacancies(employerId: Id)
+  + void createVacancy(String name, Details details)
+  + void editVacancy(Id id, Details details)
+  + void deleteVacancy(Id id)
+  + List<Vacancy> getVacancies(Id employerId)
 }
 
 class ResponseController {
-  + void respond(vacancyId: Id)
-  + List<VacancyResponse> getRespondees()
-  + List<VacancyResponse> getRespondees(vacancyId: Id)
-  + Option<VacancyResponse> getRespondees(vacancyId: Id, applicantId: Id)
+  + void respond(Id vacancyId)
+  + List<VacancyResponse> getRespondses(Id vacancyId)
+  + Optional<VacancyResponse> getResponse(Id vacancyId, Id applicantId)
 }
 
 class Vacancy {
   + Id id
-  + String name
-  + String description
   + bool isClosed
 }
 
@@ -56,17 +56,23 @@ class Tag {
 }
 
 class SearchEngine {
-  List<Id> searchEmployers(query: String)
-  List<Id> searchVacancies(query: String)
-  void applyTagFilter(tags: List<Tag>)
-  void applyEmployerFilter(employerIds: List<Id>)
+  List<Id> search(SearchQuery query)
+  SearchQuery createSearchQuery(String query)
+  SearchQuery applyTags(SearchQuery query, List<Tag> tags)
+  SearchQuery applyEmployerFilter(SearchQuery query, List<Id> employerIds)
+}
+
+class SearchQuery {
+  + String query
+  + List<Tag> tags
+  + List<Id> employerFilter
 }
 
 interface Repository<T> {
-  + T get(id: Id)
-  + Id create(thing: T)
-  + bool update(id: Id, newState: T)
-  + bool delete(id: Id)
+  + T get(Id id)
+  + Id create(T thing)
+  + bool update(Id id, T newState)
+  + bool delete(Id id)
 }
 
 class VacancyRepository {
@@ -85,6 +91,8 @@ class ResponseRepository {
   - DBConn connection
 }
 
+User "1" *-- "1" Details
+
 User <|-- Employer
 User <|-- Applicant
 
@@ -95,7 +103,8 @@ Applicant <-. ResponseController
 
 User <-. UserManager
 
-Vacancy <-- Tag
+Vacancy "1" *-- "1" Details
+Details "1" o- "*" Tag
 
 VacancyResponse *- ResponseStatus
 
@@ -113,6 +122,7 @@ VacancyController -.-> Vacancy
 SearchEngine --> VacancyRepository
 SearchEngine --> UserRepository
 SearchEngine --> TagRepository
+SearchEngine -.- SearchQuery
 
 ResponseController --> VacancyRepository
 ResponseController --> ResponseRepository
