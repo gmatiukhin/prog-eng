@@ -3,17 +3,17 @@
 full: render tex
 
 tex:
-	latexmk report.tex --shell-escape -pdf
+	latexmk spec.tex --shell-escape -pdf
 
 watch:
-	fd --type f --regex '(.*plantuml$$)|report.tex$$' . | entr -n -s "make full"
+	fd --type f --regex '(.*plantuml$$)|spec.tex$$' . | entr -n -s "make full"
 
 render:
 	mkdir -p diagrams/output
 	cd diagrams && find -name "*.plantuml" | xargs -I{} curl localhost:8080/png --data-binary @{} --output output/{}-rendered.png
 clean:
 	rm -r diagrams/output
-	latexmk -c report.tex
+	latexmk -c spec.tex
 
 server-up:
 	docker run --rm -d -p 8080:8080 plantuml/plantuml-server:jetty
